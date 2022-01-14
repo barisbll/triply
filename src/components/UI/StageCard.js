@@ -40,7 +40,7 @@ const StageCard = (props) => {
           >
             Create Details
           </Link>
-          <div className="btn-group d-flex ">
+          <div className="btn-group d-flex flex-wrap ">
             <button
               className="btn btn-dark "
               data-toggle="modal"
