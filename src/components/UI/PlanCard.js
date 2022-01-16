@@ -17,6 +17,8 @@ const PlanCard = (props) => {
 
   const dateStartReadable = dateTimeFormat.format(dateStart);
   const dateEndReadable = dateTimeFormat.format(dateEnd);
+  // const dateStartReadable = "dateTimeFormat.format(dateStart)";
+  // const dateEndReadable = "dateTimeFormat.format(dateEnd)";
 
   return (
     <Fragment>

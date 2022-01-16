@@ -1,14 +1,36 @@
+import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 const Login = (props) => {
   const history = useHistory();
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
 
   const submitButtonHandler = (e) => {
     e.preventDefault();
-    props.setIsLoggedIn(true);
 
-    // Validation Check
-    // Send Post Request
+    fetch("http://192.168.43.93:8080/pts/user/login", {
+      method: "POST",
+      body: JSON.stringify({ Email: email, Password: password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((resData) => {
+        console.log(resData);
+        if (!resData.Success) {
+          // Display some error messages
+          history.push("/login?error=true");
+        }
+
+        props.setIsLoggedIn(true);
+        props.setUserId(resData.userID);
+        localStorage.setItem("userId", resData.userID);
+      });
 
     // If status code 200 or 201
     history.push("/welcome");
@@ -19,13 +41,17 @@ const Login = (props) => {
       <form className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
         <div className="form-group mt-5">
           <label htmlFor="name" className="mb-1">
-            Username:
+            Email:
           </label>
           <input
             className="form-control"
             type="text"
             id="name"
-            placeholder="Enter Name:"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            placeholder="Enter Email:"
           />
         </div>
         <div className="form-group">
@@ -37,6 +63,10 @@ const Login = (props) => {
             type="password"
             id="password"
             placeholder="Enter Password:"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
         </div>
         <Link to="/register" className="mb-3 d-block">

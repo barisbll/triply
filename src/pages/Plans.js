@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import NoItemsCard from "../components/UI/NoItemsCard";
 import PlanCard from "../components/UI/PlanCard";
 import CreateCard from "../components/UI/CreateCard";
@@ -29,10 +29,21 @@ const dummyPlans = [
   },
 ];
 
-const Plans = () => {
+const Plans = (props) => {
   // useEffect to fetch all the plans
-  const allPlans = dummyPlans;
+  const [allPlans, setAllPlans] = useState(null);
+
+  const userId = props.userId;
   let cards;
+  useEffect(() => {
+    fetch(`http://192.168.43.93:8080/pts/user/${userId}/plans`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((resData) => {
+        setAllPlans(resData.Results);
+      });
+  }, []);
 
   if (!allPlans) {
     cards = (
@@ -45,14 +56,15 @@ const Plans = () => {
     );
   } else {
     const items = allPlans.map((plan) => {
+      console.log(plan);
       return (
         <PlanCard
-          planName={plan.planName}
-          dateStart={plan.dateStart}
-          dateEnd={plan.dateEnd}
-          numOfPeople={plan.numOfPeople}
-          planId={plan.planId}
-          key={plan.planName}
+          planName={plan.Name}
+          dateStart={plan.TripStartDate}
+          dateEnd={plan.TripEndDate}
+          numOfPeople={plan.NumberOfTravelers}
+          planId={plan.PlanId}
+          key={plan.PlanId}
         />
       );
     });

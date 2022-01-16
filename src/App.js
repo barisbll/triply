@@ -19,6 +19,14 @@ import CreateATransportDetail from "./pages/detailsCreatePages/CreateATransportD
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  console.log(userId);
+
+  // if (localStorage.getItem("userId")) {
+  //   setUserId(localStorage.getItem("userId"));
+  //   setIsLoggedIn(true);
+  // }
 
   return (
     <Layout isLoggedIn={isLoggedIn}>
@@ -30,13 +38,20 @@ function App() {
           <Welcome isLoggedIn={isLoggedIn} />
         </Route>
         <Route path="/login">
-          <Login setIsLoggedIn={setIsLoggedIn} />
+          <Login setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />
         </Route>
         <Route path="/register">
-          <Register setIsLoggedIn={setIsLoggedIn} />
+          <Register setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />
         </Route>
         <Route path="/plans" exact>
-          {isLoggedIn ? <Plans /> : <Redirect to="/login" />}
+          {isLoggedIn ? <Plans userId={userId} /> : <Redirect to="/login" />}
+        </Route>
+        <Route path="/create-a-plan">
+          {isLoggedIn ? (
+            <CreateAPlan userId={userId} />
+          ) : (
+            <Redirect to="/login" />
+          )}
         </Route>
         <Route path="/plans/:planId" exact>
           {isLoggedIn ? <Stages /> : <Redirect to="/login" />}
@@ -66,9 +81,6 @@ function App() {
           ) : (
             <Redirect to="/login" />
           )}
-        </Route>
-        <Route path="/create-a-plan">
-          {isLoggedIn ? <CreateAPlan /> : <Redirect to="/login" />}
         </Route>
         <Route path="/log-out">
           {isLoggedIn ? (

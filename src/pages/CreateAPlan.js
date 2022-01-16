@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-const CreateAPlan = () => {
+const CreateAPlan = (props) => {
+  const userId = props.userId;
+
   const [planName, setPlanName] = useState(null);
   const [durationStart, setDurationStart] = useState(null);
   const [durationEnd, setDurationEnd] = useState(null);
@@ -28,8 +30,31 @@ const CreateAPlan = () => {
     // Validation check
     // Make the post request to the server
     // Check if status code is okay
+    fetch(`http://192.168.43.93:8080/pts/user/${userId}/plans`, {
+      method: "POST",
+      body: JSON.stringify({
+        TripStartDate: durationStart,
+        TripEndDate: durationEnd,
+        NumberOfTravelers: numOfPeople,
+        Name: planName,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((resData) => {
+        console.log(resData);
+        if (!resData.Success) {
+          // Display some error messages
+          history.push("/create-a-plan?error=true");
+        }
+      });
 
-    history.push("/plans");
+    // history.push("/plans");
   };
 
   return (

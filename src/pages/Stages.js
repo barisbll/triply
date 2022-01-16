@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 
 import NoItemsCard from "../components/UI/NoItemsCard";
@@ -64,9 +64,28 @@ const dummyStages = [
 
 const Stages = () => {
   const match = useRouteMatch();
+  let planId = match.params.planId;
+  // In planId 3 we have user with stages
 
   // useEffect to fetch all the plans
-  const allStages = dummyStages;
+  const [allStages, setAllStages] = useState(null);
+
+  // Take the user from login state with props
+  const userId = 4;
+
+  useEffect(() => {
+    fetch(`http://192.168.43.93:8080/pts/user/${userId}/plans/${planId}/stages`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((resData) => {
+        if (resData.Success) {
+          setAllStages(resData.Results);
+        }
+      });
+  }, []);
+
+  // setAllStages(dummyStages);
   let cards;
 
   if (!allStages) {
@@ -82,19 +101,19 @@ const Stages = () => {
       </Fragment>
     );
   } else {
-    const items = allStages.map((stage) => {
+    const items = allStages?.map((stage) => {
       return (
         <StageCard
-          dateStart={stage.dateStart}
-          dateEnd={stage.dateEnd}
-          planId={match.params.planId}
-          stageId={stage.stageId}
-          country={stage.address.country}
-          city={stage.address.city}
-          street={stage.address.street}
-          postalCode={stage.address.postalCode}
-          buildingNumber={stage.address.buildingNumber}
-          flatNumber={stage.address.flatNumber}
+          dateStart={stage.StageStartDate}
+          dateEnd={stage.StageEndDate}
+          planId={stage.Plan}
+          stageId={stage.StageId}
+          country={stage.Address.Country}
+          city={stage.Address.City}
+          street={stage.Address.Street}
+          postalCode={stage.Address.PostalCode}
+          buildingNumber={stage.Address.BuildingNumber}
+          flatNumber={stage.Address.FlatNumber}
           key={stage.stageId}
         />
       );
